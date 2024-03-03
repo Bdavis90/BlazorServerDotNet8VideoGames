@@ -1,0 +1,48 @@
+﻿@page "/games"
+@using VideoGames.Models
+@inject IVideoGameService VideoGameService
+
+<PageTitle>Video Games</PageTitle>
+<h3>VideoGamesOverview</h3>
+
+@if(VideoGames.Count == 0)
+{
+    <p><em>Loading Video Games...</em></p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Developer</th>
+                <th>Release Year</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var game in VideoGames)
+            {
+                <tr>
+                    <td>
+                        @game.Title
+                    </td>
+                    <td>
+                        @game.Developer
+                    </td>
+                    <td>
+                        @game.ReleaseYear
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<VideoGame> VideoGames = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        VideoGames = await VideoGameService.GetVideoGamesAsync();
+    }
+}
