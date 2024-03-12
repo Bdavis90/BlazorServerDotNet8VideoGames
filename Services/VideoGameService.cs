@@ -13,19 +13,16 @@ namespace VideoGames.Services
             _dataContext = context;
         }
 
-        [HttpGet]
         public async Task<List<VideoGame>> GetVideoGamesAsync()
         {
             return await _dataContext?.VideoGames?.ToListAsync();
         }
 
-        [HttpGet("{id}")]
         public async Task<VideoGame> GetVideoGameByIdAsync(int id)
         {
             return await _dataContext.VideoGames.FindAsync(id);
         }
 
-        [HttpPost]
         public async Task AddVideoGameAsync(VideoGame videoGame)
         {
 
@@ -34,17 +31,16 @@ namespace VideoGames.Services
 
         }
 
-        [HttpDelete("{id}")]
         public async Task DeleteVideoGameAsync(int id)
         {
             var game = await _dataContext.VideoGames.FindAsync(id);
             if (game != null)
             {
                 _dataContext.VideoGames.Remove(game);
+                await _dataContext.SaveChangesAsync();
             }
         }
 
-        [HttpPut("{id}")]
         public async Task UpdateVideoGameAsync(VideoGame newGame, int id)
         {
             var game = await _dataContext.VideoGames.FindAsync(id);

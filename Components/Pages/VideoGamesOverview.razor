@@ -1,22 +1,25 @@
 ﻿@page "/games"
-@using VideoGames.Models
 @inject IVideoGameService VideoGameService
+@inject NavigationManager NavigationManager
+@rendermode @(new InteractiveServerRenderMode(false))
 
 <PageTitle>Video Games</PageTitle>
 <h3>VideoGamesOverview</h3>
 
-@if(VideoGames.Count == 0)
+@if(!VideoGames.Any())
 {
     <p><em>Loading Video Games...</em></p>
 }
 else
 {
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <th>Title</th>
                 <th>Developer</th>
                 <th>Release Year</th>
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -32,10 +35,18 @@ else
                     <td>
                         @game.ReleaseYear
                     </td>
+                    <td>
+                        <button class="btn btn-primary" type="button" onclick="@(() => EditGame(game.Id))">Edit</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" type="button" onclick="@(() => DeleteGame(game.Id))">Delete</button>
+                    </td>
                 </tr>
             }
         </tbody>
     </table>
+
+    <button class="btn btn-primary" @onclick="CreateGame">Add a New Game</button>
 }
 
 @code {
@@ -44,5 +55,22 @@ else
     protected override async Task OnInitializedAsync()
     {
         VideoGames = await VideoGameService.GetVideoGamesAsync();
+    }
+
+    private void EditGame(int id)
+    {
+        NavigationManager.NavigateTo($"edit-game/{id}");
+    }
+
+    private void CreateGame()
+    {
+        NavigationManager.NavigateTo($"edit-game");
+    }
+
+    private async Task DeleteGame(int id)
+    {
+        await VideoGameService.DeleteVideoGameAsync(id);
+        VideoGames = await VideoGameService.GetVideoGamesAsync();
+        NavigationManager.NavigateTo("/games", true);
     }
 }
